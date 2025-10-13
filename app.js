@@ -142,3 +142,51 @@ function filterTripsBySearch(searchTerm) {
     renderDashboard();
 }
 
+// Apply filters from UI
+function applyFilters() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const passengerCount = document.getElementById('passengerCount').value;
+    const minFare = document.getElementById('minFare').value;
+    const maxFare = document.getElementById('maxFare').value;
+    const minDistance = document.getElementById('minDistance').value;
+    const maxDistance = document.getElementById('maxDistance').value;
+    
+    let filtered = [...dashboardState.allTrips];
+    
+    // Date filter
+    if (startDate) {
+        filtered = filtered.filter(trip => trip.pickupTime >= startDate);
+    }
+    if (endDate) {
+        filtered = filtered.filter(trip => trip.pickupTime <= endDate);
+    }
+    
+    // Passenger count filter
+    if (passengerCount) {
+        filtered = filtered.filter(trip => trip.passengerCount === parseInt(passengerCount));
+    }
+    
+    // Fare range filter
+    if (minFare) {
+        filtered = filtered.filter(trip => trip.fareAmount >= parseFloat(minFare));
+    }
+    if (maxFare) {
+        filtered = filtered.filter(trip => trip.fareAmount <= parseFloat(maxFare));
+    }
+    
+    // Distance range filter
+    if (minDistance) {
+        filtered = filtered.filter(trip => trip.tripDistance >= parseFloat(minDistance));
+    }
+    if (maxDistance) {
+        filtered = filtered.filter(trip => trip.tripDistance <= parseFloat(maxDistance));
+    }
+    
+    dashboardState.filteredTrips = filtered;
+    dashboardState.currentPage = 1;
+    renderDashboard();
+    
+    console.log('Filters applied:', filtered.length, 'trips remaining');
+}
+
