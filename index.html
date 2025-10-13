@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Taxi Trip Analytics Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h1>NYC Taxi Analytics</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#overview" class="nav-link active">Overview</a></li>
+                <li><a href="#insights" class="nav-link">Insights</a></li>
+                <li><a href="#explore" class="nav-link">Explore Data</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Header Section -->
+        <header class="dashboard-header">
+            <h2>New York City Taxi Trip Analysis</h2>
+            <p>Explore urban mobility patterns and trip insights</p>
+        </header>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <div class="filter-card">
+                <h3>Filter Data</h3>
+                <div class="filter-grid">
+                    <div class="filter-item">
+                        <label for="dateRange">Date Range</label>
+                        <input type="date" id="startDate" class="filter-input">
+                        <input type="date" id="endDate" class="filter-input">
+                    </div>
+                    <div class="filter-item">
+                        <label for="passengerCount">Passenger Count</label>
+                        <input type="number" id="passengerCount" class="filter-input" min="1" max="6" placeholder="All">
+                    </div>
+                    <div class="filter-item">
+                        <label for="fareRange">Fare Range ($)</label>
+                        <input type="number" id="minFare" class="filter-input" placeholder="Min" min="0">
+                        <input type="number" id="maxFare" class="filter-input" placeholder="Max" min="0">
+                    </div>
+                    <div class="filter-item">
+                        <label for="tripDistance">Trip Distance (miles)</label>
+                        <input type="number" id="minDistance" class="filter-input" placeholder="Min" min="0" step="0.1">
+                        <input type="number" id="maxDistance" class="filter-input" placeholder="Max" min="0" step="0.1">
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                    <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Metrics Section -->
+        <section class="metrics-section">
+            <div class="metric-card">
+                <div class="metric-icon">🚖</div>
+                <div class="metric-content">
+                    <h3 id="totalTrips">0</h3>
+                    <p>Total Trips</p>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">💰</div>
+                <div class="metric-content">
+                    <h3 id="avgFare">$0.00</h3>
+                    <p>Average Fare</p>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">⏱️</div>
+                <div class="metric-content">
+                    <h3 id="avgDuration">0 min</h3>
+                    <p>Avg Trip Duration</p>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">📏</div>
+                <div class="metric-content">
+                    <h3 id="avgDistance">0.0 mi</h3>
+                    <p>Avg Distance</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <div class="chart-card">
+                    <h3>Trip Distribution by Hour</h3>
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Fare Distribution</h3>
+                    <canvas id="fareChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-card">
+                    <h3>Passenger Count Distribution</h3>
+                    <canvas id="passengerChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Payment Type Breakdown</h3>
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights Section -->
+        <section class="insights-section" id="insights">
+            <h2>Key Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <span class="insight-badge">Peak Hours</span>
+                    </div>
+                    <p class="insight-text" id="peakHoursInsight">Loading...</p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <span class="insight-badge">Fare Analysis</span>
+                    </div>
+                    <p class="insight-text" id="fareInsight">Loading...</p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <span class="insight-badge">Distance Patterns</span>
+                    </div>
+                    <p class="insight-text" id="distanceInsight">Loading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table Section -->
+        <section class="table-section" id="explore">
+            <div class="table-header">
+                <h2>Trip Details</h2>
+                <div class="table-controls">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search trips...">
+                    <select id="sortBy" class="sort-select" onchange="sortTable()">
+                        <option value="pickupTime">Sort by Pickup Time</option>
+                        <option value="fare">Sort by Fare</option>
+                        <option value="distance">Sort by Distance</option>
+                        <option value="duration">Sort by Duration</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="tripTable">
+                    <thead>
+                        <tr>
+                            <th>Pickup Time</th>
+                            <th>Dropoff Time</th>
+                            <th>Passengers</th>
+                            <th>Distance (mi)</th>
+                            <th>Duration (min)</th>
+                            <th>Fare ($)</th>
+                            <th>Tip ($)</th>
+                            <th>Payment Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tripTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button class="page-btn" onclick="changePage(-1)">Previous</button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button class="page-btn" onclick="changePage(1)">Next</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
