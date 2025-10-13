@@ -527,3 +527,47 @@ function renderInsights() {
         `Average trip distance is ${avgDistance.toFixed(1)} miles. Range: ${minDistance.toFixed(1)} - ${maxDistance.toFixed(1)} miles.`;
 }
 
+// Render data table
+function renderTable() {
+    const tbody = document.getElementById('tripTableBody');
+    tbody.innerHTML = '';
+    
+    const startIndex = (dashboardState.currentPage - 1) * dashboardState.itemsPerPage;
+    const endIndex = startIndex + dashboardState.itemsPerPage;
+    const currentTrips = dashboardState.filteredTrips.slice(startIndex, endIndex);
+    
+    if (currentTrips.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No trips found</td></tr>';
+        return;
+    }
+    
+    currentTrips.forEach(trip => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td>${trip.pickupTime}</td>
+            <td>${trip.dropoffTime}</td>
+            <td>${trip.passengerCount}</td>
+            <td>${trip.tripDistance.toFixed(2)}</td>
+            <td>${trip.tripDuration}</td>
+            <td>$${trip.fareAmount.toFixed(2)}</td>
+            <td>$${trip.tipAmount.toFixed(2)}</td>
+            <td>${trip.paymentType}</td>
+        `;
+    });
+}
+
+// Update pagination info
+function updatePagination() {
+    const totalPages = Math.ceil(dashboardState.filteredTrips.length / dashboardState.itemsPerPage);
+    document.getElementById('pageInfo').textContent = `Page ${dashboardState.currentPage} of ${totalPages}`;
+    
+    const prevBtn = document.querySelector('.page-btn:first-of-type');
+    const nextBtn = document.querySelector('.page-btn:last-of-type');
+    
+    if (prevBtn) {
+        prevBtn.disabled = dashboardState.currentPage === 1;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = dashboardState.currentPage >= totalPages;
+    }
+}
