@@ -484,3 +484,46 @@ function renderPaymentChart(trips) {
     });
 }
 
+// Render insights
+function renderInsights() {
+    const trips = dashboardState.filteredTrips;
+    
+    if (trips.length === 0) {
+        document.getElementById('peakHoursInsight').textContent = 'No data available';
+        document.getElementById('fareInsight').textContent = 'No data available';
+        document.getElementById('distanceInsight').textContent = 'No data available';
+        return;
+    }
+    
+    // Calculate peak hours
+    const hourlyCounts = new Array(24).fill(0);
+    trips.forEach(trip => {
+        const hour = parseInt(trip.pickupTime.split(' ')[1].split(':')[0]);
+        hourlyCounts[hour]++;
+    });
+    
+    const maxTrips = Math.max(...hourlyCounts);
+    const peakHour = hourlyCounts.indexOf(maxTrips);
+    
+    document.getElementById('peakHoursInsight').textContent = 
+        `Peak travel time is ${peakHour}:00 with ${maxTrips} trips. This represents ${((maxTrips/trips.length)*100).toFixed(1)}% of total trips.`;
+    
+    // Calculate fare insights
+    const fares = trips.map(t => t.fareAmount);
+    const avgFare = fares.reduce((a, b) => a + b, 0) / fares.length;
+    const tips = trips.map(t => t.tipAmount);
+    const avgTip = tips.reduce((a, b) => a + b, 0) / tips.length;
+    
+    document.getElementById('fareInsight').textContent = 
+        `Average fare is $${avgFare.toFixed(2)} with an average tip of $${avgTip.toFixed(2)}. Tip rate is ${((avgTip/avgFare)*100).toFixed(1)}%.`;
+    
+    // Calculate distance insights
+    const distances = trips.map(t => t.tripDistance);
+    const avgDistance = distances.reduce((a, b) => a + b, 0) / distances.length;
+    const maxDistance = Math.max(...distances);
+    const minDistance = Math.min(...distances);
+    
+    document.getElementById('distanceInsight').textContent = 
+        `Average trip distance is ${avgDistance.toFixed(1)} miles. Range: ${minDistance.toFixed(1)} - ${maxDistance.toFixed(1)} miles.`;
+}
+
