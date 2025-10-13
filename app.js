@@ -259,3 +259,228 @@ function sortTripsByField(trips, field, direction) {
     console.log('Trips sorted by', field, 'in', direction, 'order');
 }
 
+// Change page
+function changePage(direction) {
+    const totalPages = Math.ceil(dashboardState.filteredTrips.length / dashboardState.itemsPerPage);
+    const newPage = dashboardState.currentPage + direction;
+    
+    if (newPage >= 1 && newPage <= totalPages) {
+        dashboardState.currentPage = newPage;
+        renderDashboard();
+    }
+}
+
+// Render entire dashboard
+function renderDashboard() {
+    updateMetrics();
+    renderCharts();
+    renderInsights();
+    renderTable();
+    updatePagination();
+}
+
+// Update metrics cards
+function updateMetrics() {
+    const trips = dashboardState.filteredTrips;
+    
+    if (trips.length === 0) {
+        document.getElementById('totalTrips').textContent = '0';
+        document.getElementById('avgFare').textContent = '$0.00';
+        document.getElementById('avgDuration').textContent = '0 min';
+        document.getElementById('avgDistance').textContent = '0.0 mi';
+        return;
+    }
+    
+    // Calculate totals and averages
+    const totalTrips = trips.length;
+    const totalFare = trips.reduce((sum, trip) => sum + trip.fareAmount, 0);
+    const avgFare = totalFare / totalTrips;
+    const totalDuration = trips.reduce((sum, trip) => sum + trip.tripDuration, 0);
+    const avgDuration = Math.round(totalDuration / totalTrips);
+    const totalDistance = trips.reduce((sum, trip) => sum + trip.tripDistance, 0);
+    const avgDistance = (totalDistance / totalTrips).toFixed(1);
+    
+    document.getElementById('totalTrips').textContent = totalTrips.toLocaleString();
+    document.getElementById('avgFare').textContent = '$' + avgFare.toFixed(2);
+    document.getElementById('avgDuration').textContent = avgDuration + ' min';
+    document.getElementById('avgDistance').textContent = avgDistance + ' mi';
+}
+
+// Render charts
+function renderCharts() {
+    const trips = dashboardState.filteredTrips;
+    
+    // Hourly distribution chart
+    renderHourlyChart(trips);
+    
+    // Fare distribution chart
+    renderFareChart(trips);
+    
+    // Passenger count chart
+    renderPassengerChart(trips);
+    
+    // Payment type chart
+    renderPaymentChart(trips);
+}
+
+// Render hourly distribution chart
+function renderHourlyChart(trips) {
+    const hourlyData = new Array(24).fill(0);
+    
+    trips.forEach(trip => {
+        const hour = parseInt(trip.pickupTime.split(' ')[1].split(':')[0]);
+        hourlyData[hour]++;
+    });
+    
+    const ctx = document.getElementById('hourlyChart').getContext('2d');
+    
+    if (window.hourlyChartInstance) {
+        window.hourlyChartInstance.destroy();
+    }
+    
+    window.hourlyChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => i + ':00'),
+            datasets: [{
+                label: 'Number of Trips',
+                data: hourlyData,
+                backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Render fare distribution chart
+function renderFareChart(trips) {
+    const fareRanges = {
+        '0-10': 0,
+        '10-20': 0,
+        '20-30': 0,
+        '30-40': 0,
+        '40+': 0
+    };
+    
+    trips.forEach(trip => {
+        const fare = trip.fareAmount;
+        if (fare < 10) fareRanges['0-10']++;
+        else if (fare < 20) fareRanges['10-20']++;
+        else if (fare < 30) fareRanges['20-30']++;
+        else if (fare < 40) fareRanges['30-40']++;
+        else fareRanges['40+']++;
+    });
+    
+    const ctx = document.getElementById('fareChart').getContext('2d');
+    
+    if (window.fareChartInstance) {
+        window.fareChartInstance.destroy();
+    }
+    
+    window.fareChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(fareRanges),
+            datasets: [{
+                data: Object.values(fareRanges),
+                backgroundColor: [
+                    'rgba(52, 152, 219, 0.7)',
+                    'rgba(46, 204, 113, 0.7)',
+                    'rgba(241, 196, 15, 0.7)',
+                    'rgba(231, 76, 60, 0.7)',
+                    'rgba(155, 89, 182, 0.7)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+// Render passenger count chart
+function renderPassengerChart(trips) {
+    const passengerCounts = {};
+    
+    trips.forEach(trip => {
+        const count = trip.passengerCount;
+        passengerCounts[count] = (passengerCounts[count] || 0) + 1;
+    });
+    
+    const ctx = document.getElementById('passengerChart').getContext('2d');
+    
+    if (window.passengerChartInstance) {
+        window.passengerChartInstance.destroy();
+    }
+    
+    window.passengerChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(passengerCounts),
+            datasets: [{
+                label: 'Number of Trips',
+                data: Object.values(passengerCounts),
+                backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                borderColor: 'rgba(46, 204, 113, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Render payment type chart
+function renderPaymentChart(trips) {
+    const paymentTypes = {};
+    
+    trips.forEach(trip => {
+        const type = trip.paymentType;
+        paymentTypes[type] = (paymentTypes[type] || 0) + 1;
+    });
+    
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+    
+    if (window.paymentChartInstance) {
+        window.paymentChartInstance.destroy();
+    }
+    
+    window.paymentChartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(paymentTypes),
+            datasets: [{
+                data: Object.values(paymentTypes),
+                backgroundColor: [
+                    'rgba(52, 152, 219, 0.7)',
+                    'rgba(46, 204, 113, 0.7)',
+                    'rgba(241, 196, 15, 0.7)',
+                    'rgba(231, 76, 60, 0.7)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
