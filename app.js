@@ -190,3 +190,19 @@ function applyFilters() {
     console.log('Filters applied:', filtered.length, 'trips remaining');
 }
 
+// Reset all filters
+function resetFilters() {
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    document.getElementById('passengerCount').value = '';
+    document.getElementById('minFare').value = '';
+    document.getElementById('maxFare').value = '';
+    document.getElementById('minDistance').value = '';
+    document.getElementById('maxDistance').value = '';
+    document.getElementById('searchInput').value = '';
+    
+    dashboardState.filteredTrips = [...dashboardState.allTrips];
+    dashboardState.currentPage = 1;
+    renderDashboard();
+}
+
