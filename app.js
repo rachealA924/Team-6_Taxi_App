@@ -206,3 +206,56 @@ function resetFilters() {
     renderDashboard();
 }
 
+// Sort table by selected column
+function sortTable() {
+    const sortBy = document.getElementById('sortBy').value;
+    dashboardState.currentSort = sortBy;
+    
+    // Toggle sort direction
+    if (dashboardState.currentSort === sortBy) {
+        dashboardState.sortDirection = dashboardState.sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    
+    sortTripsByField(dashboardState.filteredTrips, sortBy, dashboardState.sortDirection);
+    renderDashboard();
+}
+
+// Custom sorting algorithm - sorts trips by specified field
+function sortTripsByField(trips, field, direction) {
+    const sortedTrips = [...trips];
+    
+    // Bubble sort implementation
+    for (let i = 0; i < sortedTrips.length - 1; i++) {
+        for (let j = 0; j < sortedTrips.length - i - 1; j++) {
+            let shouldSwap = false;
+            
+            if (field === 'pickupTime') {
+                shouldSwap = direction === 'asc' 
+                    ? sortedTrips[j].pickupTime > sortedTrips[j + 1].pickupTime
+                    : sortedTrips[j].pickupTime < sortedTrips[j + 1].pickupTime;
+            } else if (field === 'fare') {
+                shouldSwap = direction === 'asc'
+                    ? sortedTrips[j].fareAmount > sortedTrips[j + 1].fareAmount
+                    : sortedTrips[j].fareAmount < sortedTrips[j + 1].fareAmount;
+            } else if (field === 'distance') {
+                shouldSwap = direction === 'asc'
+                    ? sortedTrips[j].tripDistance > sortedTrips[j + 1].tripDistance
+                    : sortedTrips[j].tripDistance < sortedTrips[j + 1].tripDistance;
+            } else if (field === 'duration') {
+                shouldSwap = direction === 'asc'
+                    ? sortedTrips[j].tripDuration > sortedTrips[j + 1].tripDuration
+                    : sortedTrips[j].tripDuration < sortedTrips[j + 1].tripDuration;
+            }
+            
+            if (shouldSwap) {
+                const temp = sortedTrips[j];
+                sortedTrips[j] = sortedTrips[j + 1];
+                sortedTrips[j + 1] = temp;
+            }
+        }
+    }
+    
+    dashboardState.filteredTrips = sortedTrips;
+    console.log('Trips sorted by', field, 'in', direction, 'order');
+}
+
