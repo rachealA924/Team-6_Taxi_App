@@ -243,12 +243,8 @@ This is a team project. All team members should:
 
 ## Team Members
 
-- [Team Member 1]
-- [Team Member 2]
-- [Team Member 3]
-- [Team Member 4]
-- [Team Member 5]
-- [Team Member 6]
+- Racheal Resty Akello (r.akeello@alustudent.com)
+- Ishimwe Bruno (i.bruno@alustudent.com)
 
 ## License
 
@@ -266,5 +262,5 @@ For questions or issues, please contact the team or create an issue in the repos
 
 ---
 
-**Note**: This is a frontend-only implementation. Backend and database components are to be developed as part of the full assignment requirements.
+*Note*: This is a frontend-only implementation. Backend and database components are to be developed as part of the full assignment requirements.
 
