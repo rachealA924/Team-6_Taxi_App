@@ -5,16 +5,16 @@
 }
 
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
-    --success-color: #27ae60;
-    --warning-color: #f39c12;
-    --bg-color: #f5f7fa;
-    --card-bg: #ffffff;
-    --text-primary: #2c3e50;
-    --text-secondary: #7f8c8d;
-    --border-color: #e0e0e0;
+    --primary-color: rgb(44, 62, 80);
+    --secondary-color: rgb(52, 152, 219);
+    --accent-color: rgb(231, 76, 60);
+    --success-color: rgb(39, 174, 96);
+    --warning-color: rgb(243, 156, 18);
+    --bg-color: rgb(245, 247, 250);
+    --card-bg: rgb(255, 255, 255);
+    --text-primary: rgb(44, 62, 80);
+    --text-secondary: rgb(127, 140, 141);
+    --border-color: rgb(224, 224, 224);
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
@@ -182,7 +182,7 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: rgb(41, 128, 185);
     transform: translateY(-2px);
 }
 
@@ -192,7 +192,7 @@ body {
 }
 
 .btn-secondary:hover {
-    background-color: #5f6c6d;
+    background-color: rgb(95, 108, 109);
 }
 
 /* Metrics Section */
@@ -403,7 +403,7 @@ body {
 }
 
 .data-table tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: rgb(248, 249, 250);
 }
 
 /* Pagination */
@@ -428,7 +428,7 @@ body {
 }
 
 .page-btn:hover {
-    background-color: #2980b9;
+    background-color: rgb(41, 128, 185);
 }
 
 .page-btn:disabled {
