@@ -48,7 +48,9 @@ Team-6_Taxi_App/
 ├── styles.css         
 ├── app.js             
 ├── README.md          
-├── setup.sh           
+├── setup.sh
+|-- setup.py
+|-- .gitignore           
 │
 ├── backend/           
 │   ├── app.py        
@@ -59,7 +61,7 @@ Team-6_Taxi_App/
 │   └── taxi_data.db   
 ├── database/         
 │   └── schema.sql     
-│
+|---data/raw
      
 ```
 
@@ -132,18 +134,7 @@ The backend provides:
 
 ### Real Dataset Processing
 
-For assignment compliance with the official NYC Taxi Trip Dataset:
-
-1. **Place `train.zip`** in `data/raw/` directory
-2. **Run data processing** (Python script):
-   ```bash
-   cd backend
-   python data_processing/process_real_data.py
-   ```
-3. **Start the server**:
-   ```bash
-   python app.py
-   ```
+the train.csv is placed in data/raw
 
 ## Usage
 
@@ -236,7 +227,7 @@ The frontend automatically integrates with the backend API:
 ### Automatic Fallback
 The frontend automatically detects API availability:
 - ✅ **API Available**: Uses real data from backend
-- ❌ **API Unavailable**: Falls back to sample data
+
 
 This ensures the dashboard works in both development and production environments.
 
@@ -275,27 +266,17 @@ This ensures the dashboard works in both development and production environments
 - Lazy loading can be implemented for large datasets
 - Debouncing on search input for better UX
 
-## Future Enhancements
 
-- [ ] Backend API implementation
-- [ ] Database integration
-- [ ] Data processing pipeline
-- [ ] User authentication
-- [ ] Export functionality (CSV, PDF)
-- [ ] Advanced analytics and ML predictions
-- [ ] Real-time data updates
-- [ ] Map visualization with pickup/dropoff locations
-- [ ] Comparison mode for different time periods
 
 ## Contributing
 
-This is a team project. All team members should:
+This is a team project. 
 
-1. Create feature branches for new work
-2. Write clear commit messages
-3. Test thoroughly before merging
-4. Update documentation as needed
-5. Follow the existing code style
+1. Created feature branches for new work
+2. Wrote clear commit messages
+3. Tested thoroughly before merging
+4. Updated documentation as needed
+5. Followed the existing code style
 
 ## Team Members
 
@@ -304,7 +285,7 @@ This is a team project. All team members should:
 
 ## License
 
-This project is created for educational purposes as part of a university assignment.
+This project is created for easy way of helping the community.
 
 ## Contact
 
@@ -318,5 +299,5 @@ For questions or issues, please contact the team or create an issue in the repos
 
 ---
 
-*Note*: This is a frontend-only implementation. Backend and database components are to be developed as part of the full assignment requirements.
+
 
