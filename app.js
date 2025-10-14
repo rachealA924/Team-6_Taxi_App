@@ -571,3 +571,39 @@ function updatePagination() {
         nextBtn.disabled = dashboardState.currentPage >= totalPages;
     }
 }
+
+// API Integration Functions (to be implemented when backend is ready)
+async function fetchTripsFromAPI() {
+    try {
+        // const response = await fetch('http://localhost:5000/api/trips');
+        // const data = await response.json();
+        // return data;
+        
+        // For now, return sample data
+        return sampleTrips;
+    } catch (error) {
+        console.error('Error fetching trips:', error);
+        return [];
+    }
+}
+
+async function fetchFilteredTrips(filters) {
+    try {
+        // const response = await fetch('http://localhost:5000/api/trips/filter', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(filters)
+        // });
+        // const data = await response.json();
+        // return data;
+        
+        // For now, return sample data
+        return sampleTrips;
+    } catch (error) {
+        console.error('Error fetching filtered trips:', error);
+        return [];
+    }
+}
+
+console.log('Dashboard app loaded successfully');
+
