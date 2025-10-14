@@ -33,7 +33,8 @@ This application processes raw NYC taxi trip data, stores it in a relational dat
 - **Google Fonts**: Quicksand font family
 
 ### Backend
-- **Node.js/Express**: Backend framework
+- **Flask**: Python web framework
+- **SQLAlchemy**: ORM for database operations
 - **SQLite**: Relational database (development)
 - **RESTful API**: Complete data endpoints
 - **CORS Enabled**: Frontend integration ready
@@ -49,11 +50,15 @@ Team-6_Taxi_App/
 ├── README.md          # Project documentation
 ├── setup.sh           # Setup script
 │
-├── backend/           # Backend API server
-│   ├── server.js      # Express server setup
-│   ├── package.json   # Node.js dependencies
-│   ├── taxi_data.db   # SQLite database (auto-created)
-│   └── README.md      # Backend documentation
+├── backend/           # Flask backend API
+│   ├── app.py         # Flask application
+│   ├── requirements.txt # Python dependencies
+│   ├── models/        # Database models
+│   ├── routes/        # API routes
+│   ├── data_processing/ # Data cleaning scripts
+│   └── taxi_data.db   # SQLite database
+├── database/          # Database schema
+│   └── schema.sql     # SQL schema definition
 │
 └── data/              # Data files
     ├── raw/           # Raw dataset (for future use)
@@ -64,8 +69,7 @@ Team-6_Taxi_App/
 
 ### Prerequisites
 - Modern web browser (Chrome, Firefox, Safari, Edge)
-- Node.js (v14 or higher)
-- npm (comes with Node.js)
+- Python 3.7 or higher
 - Git (for version control)
 
 ### Quick Setup
@@ -78,13 +82,16 @@ cd Team-6_Taxi_App
 
 2. **Run the setup script**
 ```bash
-./setup.sh
+python setup.py
 ```
 
-3. **Start the backend server**
+3. **Start the Flask server**
 ```bash
-cd backend
-npm start
+# Activate virtual environment
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Start the server
+cd backend && python app.py
 ```
 
 4. **Access the dashboard**
@@ -102,12 +109,15 @@ python -m http.server 8000
 
 #### Full Stack (Frontend + Backend)
 ```bash
-# Install backend dependencies
-cd backend
-npm install
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r backend/requirements.txt
 
 # Start the server
-npm start
+cd backend && python app.py
 
 # Access at http://localhost:5000
 ```
@@ -127,17 +137,15 @@ The backend provides:
 For assignment compliance with the official NYC Taxi Trip Dataset:
 
 1. **Place `train.zip`** in `data/raw/` directory
-2. **Run data processing**:
+2. **Run data processing** (Python script):
    ```bash
    cd backend
-   npm run process-data
+   python data_processing/process_real_data.py
    ```
 3. **Start the server**:
    ```bash
-   npm start
+   python app.py
    ```
-
-See [REAL_DATA_SETUP.md](REAL_DATA_SETUP.md) for detailed instructions.
 
 ## Usage
 

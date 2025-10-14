@@ -5,34 +5,37 @@
 echo "🚕 NYC Taxi Analytics Dashboard Setup"
 echo "====================================="
 
-# Check if Node.js is installed
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js is not installed. Please install Node.js first:"
-    echo "   https://nodejs.org/"
+# Check if Python is installed
+if ! command -v python3 &> /dev/null; then
+    echo "❌ Python 3 is not installed. Please install Python 3.7 or higher:"
+    echo "   https://python.org/"
     exit 1
 fi
 
-# Check if npm is installed
-if ! command -v npm &> /dev/null; then
-    echo "❌ npm is not installed. Please install npm first."
-    exit 1
-fi
+echo "✅ Python 3 is installed"
 
-echo "✅ Node.js and npm are installed"
-
-# Install backend dependencies
-echo "📦 Installing backend dependencies..."
-cd backend
-npm install
+# Create virtual environment
+echo "🐍 Creating Python virtual environment..."
+python3 -m venv venv
 
 if [ $? -eq 0 ]; then
-    echo "✅ Backend dependencies installed successfully"
+    echo "✅ Virtual environment created successfully"
 else
-    echo "❌ Failed to install backend dependencies"
+    echo "❌ Failed to create virtual environment"
     exit 1
 fi
 
-cd ..
+# Install backend dependencies
+echo "📦 Installing Python dependencies..."
+source venv/bin/activate
+pip install -r backend/requirements.txt
+
+if [ $? -eq 0 ]; then
+    echo "✅ Python dependencies installed successfully"
+else
+    echo "❌ Failed to install Python dependencies"
+    exit 1
+fi
 
 # Create data directory
 echo "📁 Creating data directory..."
@@ -46,15 +49,18 @@ echo ""
 echo "🎉 Setup completed successfully!"
 echo ""
 echo "📋 Next Steps:"
-echo "1. For REAL NYC DATASET (Assignment Requirement):"
+echo "1. Activate virtual environment:"
+echo "   source venv/bin/activate"
+echo ""
+echo "2. For REAL NYC DATASET (Assignment Requirement):"
 echo "   - Place train.zip in data/raw/ directory"
-echo "   - cd backend && npm run process-data"
-echo "   - npm start"
+echo "   - cd backend && python data_processing/process_real_data.py"
+echo "   - python app.py"
 echo ""
-echo "2. For SAMPLE DATA (Quick Start):"
-echo "   cd backend && npm start"
+echo "3. For SAMPLE DATA (Quick Start):"
+echo "   cd backend && python app.py"
 echo ""
-echo "3. Open the dashboard:"
+echo "4. Open the dashboard:"
 echo "   http://localhost:5000"
 echo ""
 echo "📊 Features:"
