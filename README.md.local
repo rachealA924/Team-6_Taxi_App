@@ -1,0 +1,67 @@
+# NYC Taxi Trip Analytics Dashboard
+
+A fullstack application for analyzing New York City taxi trip data with interactive visualizations and insights.
+
+## Project Structure
+
+```
+├── backend/                 # Flask backend API
+│   ├── app.py              # Main Flask application
+│   ├── models/             # Database models
+│   ├── routes/             # API routes
+│   ├── data_processing/    # Data cleaning and processing
+│   └── requirements.txt    # Python dependencies
+├── frontend/               # Frontend dashboard
+│   ├── index.html         # Main HTML file
+│   ├── css/               # Stylesheets
+│   ├── js/                # JavaScript files
+│   └── assets/            # Static assets
+├── database/              # Database setup and scripts
+│   ├── schema.sql         # Database schema
+│   └── seed_data.py       # Data insertion scripts
+├── data/                  # Raw and processed data
+└── docs/                  # Documentation
+```
+
+## Features
+
+- **Data Processing**: Clean and preprocess NYC taxi trip data
+- **Database**: Normalized relational schema with PostgreSQL
+- **Backend API**: RESTful endpoints for data queries
+- **Frontend Dashboard**: Interactive visualizations and analytics
+- **Insights**: Trip patterns, fare analysis, and mobility trends
+
+## Setup Instructions
+
+1. Install dependencies:
+   ```bash
+   pip install -r backend/requirements.txt
+   ```
+
+2. Set up PostgreSQL database:
+   ```bash
+   createdb nyc_taxi_analytics
+   psql nyc_taxi_analytics < database/schema.sql
+   ```
+
+3. Run the backend:
+   ```bash
+   cd backend
+   python app.py
+   ```
+
+4. Open the frontend:
+   ```bash
+   cd frontend
+   open index.html
+   ```
+
+## Dataset
+
+Uses the official NYC Taxi Trip Dataset with trip-level records including:
+- Pickup/dropoff timestamps and coordinates
+- Trip duration and distance
+- Fare amount and tip
+- Passenger and payment metadata
+
+
