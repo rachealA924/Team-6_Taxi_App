@@ -91,11 +91,10 @@ const sampleTrips = [
 ];
 
 // Initialize Dashboard
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('Dashboard initialized');
-    loadSampleData();
+    await loadSampleData();
     setupEventListeners();
-    renderDashboard();
 });
 
 // Load data from API or fallback to sample data
@@ -113,16 +112,16 @@ async function loadSampleData() {
         dashboardState.filteredTrips = [...data.trips];
         
         console.log(`Loaded ${data.trips.length} trips from API`);
-        updateStats();
-        renderDashboard();
+        await updateStats();
+        await renderDashboard();
         
     } catch (error) {
         console.warn('API not available, using sample data:', error.message);
-        dashboardState.allTrips = sampleTrips;
-        dashboardState.filteredTrips = [...sampleTrips];
-        console.log('Sample data loaded:', dashboardState.allTrips.length, 'trips');
-        updateStats();
-        renderDashboard();
+    dashboardState.allTrips = sampleTrips;
+    dashboardState.filteredTrips = [...sampleTrips];
+    console.log('Sample data loaded:', dashboardState.allTrips.length, 'trips');
+        await updateStats();
+        await renderDashboard();
     }
 }
 
@@ -201,53 +200,53 @@ async function applyFilters() {
         dashboardState.currentPage = 1;
         
         console.log(`Loaded ${data.trips.length} filtered trips from API`);
-        renderDashboard();
+        await renderDashboard();
         
     } catch (error) {
         console.warn('API not available, using local filtering:', error.message);
         
         // Fallback to local filtering
-        let filtered = [...dashboardState.allTrips];
-        
-        // Date filter
-        if (startDate) {
-            filtered = filtered.filter(trip => trip.pickupTime >= startDate);
-        }
-        if (endDate) {
-            filtered = filtered.filter(trip => trip.pickupTime <= endDate);
-        }
-        
-        // Passenger count filter
-        if (passengerCount) {
-            filtered = filtered.filter(trip => trip.passengerCount === parseInt(passengerCount));
-        }
-        
-        // Fare range filter
-        if (minFare) {
-            filtered = filtered.filter(trip => trip.fareAmount >= parseFloat(minFare));
-        }
-        if (maxFare) {
-            filtered = filtered.filter(trip => trip.fareAmount <= parseFloat(maxFare));
-        }
-        
-        // Distance range filter
-        if (minDistance) {
-            filtered = filtered.filter(trip => trip.tripDistance >= parseFloat(minDistance));
-        }
-        if (maxDistance) {
-            filtered = filtered.filter(trip => trip.tripDistance <= parseFloat(maxDistance));
-        }
-        
-        dashboardState.filteredTrips = filtered;
-        dashboardState.currentPage = 1;
-        renderDashboard();
-        
-        console.log('Filters applied:', filtered.length, 'trips remaining');
+    let filtered = [...dashboardState.allTrips];
+    
+    // Date filter
+    if (startDate) {
+        filtered = filtered.filter(trip => trip.pickupTime >= startDate);
+    }
+    if (endDate) {
+        filtered = filtered.filter(trip => trip.pickupTime <= endDate);
+    }
+    
+    // Passenger count filter
+    if (passengerCount) {
+        filtered = filtered.filter(trip => trip.passengerCount === parseInt(passengerCount));
+    }
+    
+    // Fare range filter
+    if (minFare) {
+        filtered = filtered.filter(trip => trip.fareAmount >= parseFloat(minFare));
+    }
+    if (maxFare) {
+        filtered = filtered.filter(trip => trip.fareAmount <= parseFloat(maxFare));
+    }
+    
+    // Distance range filter
+    if (minDistance) {
+        filtered = filtered.filter(trip => trip.tripDistance >= parseFloat(minDistance));
+    }
+    if (maxDistance) {
+        filtered = filtered.filter(trip => trip.tripDistance <= parseFloat(maxDistance));
+    }
+    
+    dashboardState.filteredTrips = filtered;
+    dashboardState.currentPage = 1;
+        await renderDashboard();
+    
+    console.log('Filters applied:', filtered.length, 'trips remaining');
     }
 }
 
 // Reset all filters
-function resetFilters() {
+async function resetFilters() {
     document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
     document.getElementById('passengerCount').value = '';
@@ -259,7 +258,142 @@ function resetFilters() {
     
     dashboardState.filteredTrips = [...dashboardState.allTrips];
     dashboardState.currentPage = 1;
-    renderDashboard();
+    await updateStats();
+    await renderDashboard();
+}
+
+// Update statistics from API or calculate locally
+async function updateStats() {
+    try {
+        // Try to get stats from API first
+        const response = await fetch(`${API_BASE_URL}/trips/stats`);
+        
+        if (response.ok) {
+            const stats = await response.json();
+            updateStatsDisplay(stats);
+            console.log('Stats loaded from API');
+            return;
+        }
+    } catch (error) {
+        console.warn('API stats not available, calculating locally:', error.message);
+    }
+    
+    // Fallback: calculate stats locally
+    const trips = dashboardState.filteredTrips;
+    if (trips.length === 0) {
+        updateStatsDisplay({
+            totalTrips: 0,
+            avgFare: 0,
+            avgDuration: 0,
+            avgDistance: 0,
+            totalRevenue: 0,
+            avgTip: 0
+        });
+        return;
+    }
+    
+    const stats = {
+        totalTrips: trips.length,
+        avgFare: trips.reduce((sum, trip) => sum + trip.fareAmount, 0) / trips.length,
+        avgDuration: trips.reduce((sum, trip) => sum + trip.tripDuration, 0) / trips.length,
+        avgDistance: trips.reduce((sum, trip) => sum + trip.tripDistance, 0) / trips.length,
+        totalRevenue: trips.reduce((sum, trip) => sum + trip.fareAmount, 0),
+        avgTip: trips.reduce((sum, trip) => sum + trip.tipAmount, 0) / trips.length
+    };
+    
+    updateStatsDisplay(stats);
+}
+
+// Update the stats display in the UI
+function updateStatsDisplay(stats) {
+    const totalTripsElement = document.getElementById('totalTrips');
+    const avgFareElement = document.getElementById('avgFare');
+    const avgDurationElement = document.getElementById('avgDuration');
+    const totalRevenueElement = document.getElementById('totalRevenue');
+    
+    if (totalTripsElement) {
+        totalTripsElement.textContent = stats.totalTrips.toLocaleString();
+    }
+    if (avgFareElement) {
+        avgFareElement.textContent = `$${stats.avgFare.toFixed(2)}`;
+    }
+    if (avgDurationElement) {
+        avgDurationElement.textContent = `${Math.round(stats.avgDuration)} min`;
+    }
+    if (totalRevenueElement) {
+        totalRevenueElement.textContent = `$${stats.totalRevenue.toFixed(2)}`;
+    }
+}
+
+// Load hourly data from API
+async function loadHourlyData() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/trips/hourly`);
+        
+        if (response.ok) {
+            const hourlyData = await response.json();
+            console.log('Hourly data loaded from API');
+            return hourlyData;
+        }
+    } catch (error) {
+        console.warn('API hourly data not available, calculating locally:', error.message);
+    }
+    
+    // Fallback: calculate hourly data locally
+    const trips = dashboardState.filteredTrips;
+    const hourlyCounts = new Array(24).fill(0);
+    const hourlyFares = new Array(24).fill(0);
+    const hourlyDistances = new Array(24).fill(0);
+    
+    trips.forEach(trip => {
+        const hour = parseInt(trip.pickupTime.split(' ')[1].split(':')[0]);
+        hourlyCounts[hour]++;
+        hourlyFares[hour] += trip.fareAmount;
+        hourlyDistances[hour] += trip.tripDistance;
+    });
+    
+    return hourlyCounts.map((count, hour) => ({
+        hour: hour,
+        count: count,
+        avgFare: count > 0 ? (hourlyFares[hour] / count).toFixed(2) : 0,
+        avgDistance: count > 0 ? (hourlyDistances[hour] / count).toFixed(2) : 0
+    }));
+}
+
+// Load payment type data from API
+async function loadPaymentTypeData() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/trips/payment-types`);
+        
+        if (response.ok) {
+            const paymentData = await response.json();
+            console.log('Payment data loaded from API');
+            return paymentData;
+        }
+    } catch (error) {
+        console.warn('API payment data not available, calculating locally:', error.message);
+    }
+    
+    // Fallback: calculate payment data locally
+    const trips = dashboardState.filteredTrips;
+    const paymentTypes = {};
+    
+    trips.forEach(trip => {
+        const type = trip.paymentType;
+        if (!paymentTypes[type]) {
+            paymentTypes[type] = { count: 0, totalFare: 0, totalTip: 0 };
+        }
+        paymentTypes[type].count++;
+        paymentTypes[type].totalFare += trip.fareAmount;
+        paymentTypes[type].totalTip += trip.tipAmount;
+    });
+    
+    return Object.entries(paymentTypes).map(([type, data]) => ({
+        paymentType: type,
+        count: data.count,
+        avgFare: (data.totalFare / data.count).toFixed(2),
+        avgTip: (data.totalTip / data.count).toFixed(2)
+    }));
 }
 
 // Sort table by selected column
@@ -327,47 +461,30 @@ function changePage(direction) {
 }
 
 // Render entire dashboard
-function renderDashboard() {
-    updateMetrics();
-    renderCharts();
+async function renderDashboard() {
+    await updateMetrics();
+    await renderCharts();
     renderInsights();
     renderTable();
     updatePagination();
 }
 
 // Update metrics cards
-function updateMetrics() {
-    const trips = dashboardState.filteredTrips;
-    
-    if (trips.length === 0) {
-        document.getElementById('totalTrips').textContent = '0';
-        document.getElementById('avgFare').textContent = '$0.00';
-        document.getElementById('avgDuration').textContent = '0 min';
-        document.getElementById('avgDistance').textContent = '0.0 mi';
-        return;
-    }
-    
-    // Calculate totals and averages
-    const totalTrips = trips.length;
-    const totalFare = trips.reduce((sum, trip) => sum + trip.fareAmount, 0);
-    const avgFare = totalFare / totalTrips;
-    const totalDuration = trips.reduce((sum, trip) => sum + trip.tripDuration, 0);
-    const avgDuration = Math.round(totalDuration / totalTrips);
-    const totalDistance = trips.reduce((sum, trip) => sum + trip.tripDistance, 0);
-    const avgDistance = (totalDistance / totalTrips).toFixed(1);
-    
-    document.getElementById('totalTrips').textContent = totalTrips.toLocaleString();
-    document.getElementById('avgFare').textContent = '$' + avgFare.toFixed(2);
-    document.getElementById('avgDuration').textContent = avgDuration + ' min';
-    document.getElementById('avgDistance').textContent = avgDistance + ' mi';
+async function updateMetrics() {
+    // Use the API-based stats function
+    await updateStats();
 }
 
 // Render charts
-function renderCharts() {
+async function renderCharts() {
     const trips = dashboardState.filteredTrips;
     
+    // Load data from API or use local data
+    const hourlyData = await loadHourlyData();
+    const paymentData = await loadPaymentTypeData();
+    
     // Hourly distribution chart
-    renderHourlyChart(trips);
+    renderHourlyChartFromData(hourlyData);
     
     // Fare distribution chart
     renderFareChart(trips);
@@ -376,7 +493,7 @@ function renderCharts() {
     renderPassengerChart(trips);
     
     // Payment type chart
-    renderPaymentChart(trips);
+    renderPaymentChartFromData(paymentData);
 }
 
 // Render hourly distribution chart
@@ -536,6 +653,85 @@ function renderPaymentChart(trips) {
         options: {
             responsive: true,
             maintainAspectRatio: false
+        }
+    });
+}
+
+// Render hourly chart from API data
+function renderHourlyChartFromData(hourlyData) {
+    const ctx = document.getElementById('hourlyChart').getContext('2d');
+    
+    if (window.hourlyChartInstance) {
+        window.hourlyChartInstance.destroy();
+    }
+    
+    window.hourlyChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: hourlyData.map(data => data.hour + ':00'),
+            datasets: [{
+                label: 'Number of Trips',
+                data: hourlyData.map(data => data.count),
+                backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Trips by Hour of Day'
+                },
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+// Render payment chart from API data
+function renderPaymentChartFromData(paymentData) {
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+    
+    if (window.paymentChartInstance) {
+        window.paymentChartInstance.destroy();
+    }
+    
+    window.paymentChartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: paymentData.map(data => data.paymentType),
+            datasets: [{
+                data: paymentData.map(data => data.count),
+                backgroundColor: [
+                    'rgba(52, 152, 219, 0.7)',
+                    'rgba(46, 204, 113, 0.7)',
+                    'rgba(241, 196, 15, 0.7)',
+                    'rgba(231, 76, 60, 0.7)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Payment Methods'
+                }
+            }
         }
     });
 }
