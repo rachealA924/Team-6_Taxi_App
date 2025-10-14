@@ -44,25 +44,23 @@ This application processes raw NYC taxi trip data, stores it in a relational dat
 ```
 Team-6_Taxi_App/
 │
-├── index.html          # Main HTML file
-├── styles.css          # Styling and layout
-├── app.js             # JavaScript logic with API integration
-├── README.md          # Project documentation
-├── setup.sh           # Setup script
+├── index.html         
+├── styles.css         
+├── app.js             
+├── README.md          
+├── setup.sh           
 │
-├── backend/           # Flask backend API
-│   ├── app.py         # Flask application
-│   ├── requirements.txt # Python dependencies
-│   ├── models/        # Database models
-│   ├── routes/        # API routes
-│   ├── data_processing/ # Data cleaning scripts
-│   └── taxi_data.db   # SQLite database
-├── database/          # Database schema
-│   └── schema.sql     # SQL schema definition
+├── backend/           
+│   ├── app.py        
+│   ├── requirements.txt 
+│   ├── models/       
+│   ├── routes/        
+│   ├── data_processing/ 
+│   └── taxi_data.db   
+├── database/         
+│   └── schema.sql     
 │
-└── data/              # Data files
-    ├── raw/           # Raw dataset (for future use)
-    └── processed/     # Cleaned data (for future use)
+     
 ```
 
 ## Installation & Setup
