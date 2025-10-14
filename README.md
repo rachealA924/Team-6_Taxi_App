@@ -32,10 +32,11 @@ This application processes raw NYC taxi trip data, stores it in a relational dat
 - **Chart.js**: Data visualization library
 - **Google Fonts**: Quicksand font family
 
-### Backend (To be implemented)
-- **Node.js/Flask**: Backend framework
-- **PostgreSQL/SQLite/MySQL**: Relational database
-- **RESTful API**: Data endpoints
+### Backend
+- **Node.js/Express**: Backend framework
+- **SQLite**: Relational database (development)
+- **RESTful API**: Complete data endpoints
+- **CORS Enabled**: Frontend integration ready
 
 ## Project Structure
 
@@ -44,32 +45,30 @@ Team-6_Taxi_App/
 │
 ├── index.html          # Main HTML file
 ├── styles.css          # Styling and layout
-├── app.js             # JavaScript logic and functionality
+├── app.js             # JavaScript logic with API integration
 ├── README.md          # Project documentation
+├── setup.sh           # Setup script
 │
-├── backend/           # Backend code (to be implemented)
-│   ├── server.js      # Server setup
-│   ├── routes/        # API routes
-│   ├── models/        # Database models
-│   └── utils/         # Utility functions
+├── backend/           # Backend API server
+│   ├── server.js      # Express server setup
+│   ├── package.json   # Node.js dependencies
+│   ├── taxi_data.db   # SQLite database (auto-created)
+│   └── README.md      # Backend documentation
 │
-├── data/              # Data files
-│   ├── raw/           # Raw dataset
-│   └── processed/     # Cleaned data
-│
-└── docs/              # Documentation
-    └── report.pdf     # Technical documentation
+└── data/              # Data files
+    ├── raw/           # Raw dataset (for future use)
+    └── processed/     # Cleaned data (for future use)
 ```
 
 ## Installation & Setup
 
 ### Prerequisites
 - Modern web browser (Chrome, Firefox, Safari, Edge)
-- Node.js (for backend - v14 or higher)
-- PostgreSQL/SQLite/MySQL (for database)
+- Node.js (v14 or higher)
+- npm (comes with Node.js)
 - Git (for version control)
 
-### Frontend Setup
+### Quick Setup
 
 1. **Clone the repository**
 ```bash
@@ -77,28 +76,50 @@ git clone <repository-url>
 cd Team-6_Taxi_App
 ```
 
-2. **Open the application**
-   - Simply open `index.html` in your web browser, or
-   - Use a local server for better performance:
-
+2. **Run the setup script**
 ```bash
-# Using Python 3
-python -m http.server 8000
-
-# Using Node.js (if you have http-server installed)
-npx http-server -p 8000
+./setup.sh
 ```
 
-3. **Access the dashboard**
-   - Open your browser and navigate to `http://localhost:8000`
+3. **Start the backend server**
+```bash
+cd backend
+npm start
+```
 
-### Backend Setup (Coming Soon)
+4. **Access the dashboard**
+   - Open your browser and navigate to `http://localhost:5000`
 
-The backend implementation will include:
-1. Data processing and cleaning scripts
-2. Database schema and migration files
-3. RESTful API endpoints
-4. Connection configuration
+### Manual Setup
+
+#### Frontend Only
+```bash
+# Simply open the HTML file
+open index.html
+# or use a local server
+python -m http.server 8000
+```
+
+#### Full Stack (Frontend + Backend)
+```bash
+# Install backend dependencies
+cd backend
+npm install
+
+# Start the server
+npm start
+
+# Access at http://localhost:5000
+```
+
+### Backend Features
+
+The backend provides:
+1. **RESTful API** with filtering and pagination
+2. **SQLite database** with sample data
+3. **Statistics endpoints** for analytics
+4. **CORS support** for frontend integration
+5. **Health check** endpoint
 
 ## Usage
 
@@ -168,21 +189,32 @@ A linear search implementation for filtering trips based on search terms.
 **Time Complexity**: O(n)
 **Space Complexity**: O(n)
 
-## API Integration (Placeholder)
+## API Integration
 
-The frontend is designed to integrate with a backend API. Currently, it uses sample data. To connect to a real backend:
+The frontend automatically integrates with the backend API:
 
-1. Update the API endpoint in `app.js`:
-```javascript
-const API_BASE_URL = 'http://localhost:5000/api';
-```
+### Available Endpoints
+- `GET /api/trips` - Fetch all trips with filtering and pagination
+- `GET /api/trips/stats` - Get aggregated statistics
+- `GET /api/trips/hourly` - Get hourly trip distribution
+- `GET /api/trips/payment-types` - Get payment type breakdown
+- `GET /api/health` - Health check
 
-2. Implement the following endpoints:
-   - `GET /api/trips` - Fetch all trips
-   - `POST /api/trips/filter` - Get filtered trips
-   - `GET /api/trips/stats` - Get aggregated statistics
+### Query Parameters
+- `page`, `limit` - Pagination
+- `sort`, `order` - Sorting
+- `startDate`, `endDate` - Date filtering
+- `passengerCount` - Passenger count filter
+- `minFare`, `maxFare` - Fare range filtering
+- `minDistance`, `maxDistance` - Distance range filtering
+- `search` - Text search
 
-3. Update the `fetchTripsFromAPI()` function to use real endpoints
+### Automatic Fallback
+The frontend automatically detects API availability:
+- ✅ **API Available**: Uses real data from backend
+- ❌ **API Unavailable**: Falls back to sample data
+
+This ensures the dashboard works in both development and production environments.
 
 ## Data Schema
 

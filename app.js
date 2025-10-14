@@ -8,7 +8,10 @@ const dashboardState = {
     sortDirection: 'desc'
 };
 
-// Sample data structure - will be replaced with API calls later
+// API Configuration
+const API_BASE_URL = 'http://localhost:5000/api';
+
+// Sample data structure - fallback if API is not available
 const sampleTrips = [
     {
         id: 1,
@@ -95,11 +98,32 @@ document.addEventListener('DOMContentLoaded', function() {
     renderDashboard();
 });
 
-// Load sample data
-function loadSampleData() {
-    dashboardState.allTrips = sampleTrips;
-    dashboardState.filteredTrips = [...sampleTrips];
-    console.log('Sample data loaded:', dashboardState.allTrips.length, 'trips');
+// Load data from API or fallback to sample data
+async function loadSampleData() {
+    try {
+        console.log('Fetching data from API...');
+        const response = await fetch(`${API_BASE_URL}/trips`);
+        
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        dashboardState.allTrips = data.trips;
+        dashboardState.filteredTrips = [...data.trips];
+        
+        console.log(`Loaded ${data.trips.length} trips from API`);
+        updateStats();
+        renderDashboard();
+        
+    } catch (error) {
+        console.warn('API not available, using sample data:', error.message);
+        dashboardState.allTrips = sampleTrips;
+        dashboardState.filteredTrips = [...sampleTrips];
+        console.log('Sample data loaded:', dashboardState.allTrips.length, 'trips');
+        updateStats();
+        renderDashboard();
+    }
 }
 
 // Setup event listeners
@@ -143,7 +167,7 @@ function filterTripsBySearch(searchTerm) {
 }
 
 // Apply filters from UI
-function applyFilters() {
+async function applyFilters() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     const passengerCount = document.getElementById('passengerCount').value;
@@ -152,42 +176,74 @@ function applyFilters() {
     const minDistance = document.getElementById('minDistance').value;
     const maxDistance = document.getElementById('maxDistance').value;
     
-    let filtered = [...dashboardState.allTrips];
-    
-    // Date filter
-    if (startDate) {
-        filtered = filtered.filter(trip => trip.pickupTime >= startDate);
+    try {
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        if (passengerCount) params.append('passengerCount', passengerCount);
+        if (minFare) params.append('minFare', minFare);
+        if (maxFare) params.append('maxFare', maxFare);
+        if (minDistance) params.append('minDistance', minDistance);
+        if (maxDistance) params.append('maxDistance', maxDistance);
+        params.append('sort', dashboardState.currentSort);
+        params.append('order', dashboardState.sortDirection);
+
+        console.log('Fetching filtered data from API...');
+        const response = await fetch(`${API_BASE_URL}/trips?${params}`);
+        
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        dashboardState.filteredTrips = data.trips;
+        dashboardState.currentPage = 1;
+        
+        console.log(`Loaded ${data.trips.length} filtered trips from API`);
+        renderDashboard();
+        
+    } catch (error) {
+        console.warn('API not available, using local filtering:', error.message);
+        
+        // Fallback to local filtering
+        let filtered = [...dashboardState.allTrips];
+        
+        // Date filter
+        if (startDate) {
+            filtered = filtered.filter(trip => trip.pickupTime >= startDate);
+        }
+        if (endDate) {
+            filtered = filtered.filter(trip => trip.pickupTime <= endDate);
+        }
+        
+        // Passenger count filter
+        if (passengerCount) {
+            filtered = filtered.filter(trip => trip.passengerCount === parseInt(passengerCount));
+        }
+        
+        // Fare range filter
+        if (minFare) {
+            filtered = filtered.filter(trip => trip.fareAmount >= parseFloat(minFare));
+        }
+        if (maxFare) {
+            filtered = filtered.filter(trip => trip.fareAmount <= parseFloat(maxFare));
+        }
+        
+        // Distance range filter
+        if (minDistance) {
+            filtered = filtered.filter(trip => trip.tripDistance >= parseFloat(minDistance));
+        }
+        if (maxDistance) {
+            filtered = filtered.filter(trip => trip.tripDistance <= parseFloat(maxDistance));
+        }
+        
+        dashboardState.filteredTrips = filtered;
+        dashboardState.currentPage = 1;
+        renderDashboard();
+        
+        console.log('Filters applied:', filtered.length, 'trips remaining');
     }
-    if (endDate) {
-        filtered = filtered.filter(trip => trip.pickupTime <= endDate);
-    }
-    
-    // Passenger count filter
-    if (passengerCount) {
-        filtered = filtered.filter(trip => trip.passengerCount === parseInt(passengerCount));
-    }
-    
-    // Fare range filter
-    if (minFare) {
-        filtered = filtered.filter(trip => trip.fareAmount >= parseFloat(minFare));
-    }
-    if (maxFare) {
-        filtered = filtered.filter(trip => trip.fareAmount <= parseFloat(maxFare));
-    }
-    
-    // Distance range filter
-    if (minDistance) {
-        filtered = filtered.filter(trip => trip.tripDistance >= parseFloat(minDistance));
-    }
-    if (maxDistance) {
-        filtered = filtered.filter(trip => trip.tripDistance <= parseFloat(maxDistance));
-    }
-    
-    dashboardState.filteredTrips = filtered;
-    dashboardState.currentPage = 1;
-    renderDashboard();
-    
-    console.log('Filters applied:', filtered.length, 'trips remaining');
 }
 
 // Reset all filters
