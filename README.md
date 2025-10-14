@@ -32,44 +32,47 @@ This application processes raw NYC taxi trip data, stores it in a relational dat
 - **Chart.js**: Data visualization library
 - **Google Fonts**: Quicksand font family
 
-### Backend (To be implemented)
-- **Node.js/Flask**: Backend framework
-- **PostgreSQL/SQLite/MySQL**: Relational database
-- **RESTful API**: Data endpoints
+### Backend
+- **Flask**: Python web framework
+- **SQLAlchemy**: ORM for database operations
+- **SQLite**: Relational database (development)
+- **RESTful API**: Complete data endpoints
+- **CORS Enabled**: Frontend integration ready
 
 ## Project Structure
 
 ```
 Team-6_Taxi_App/
 │
-├── index.html          # Main HTML file
-├── styles.css          # Styling and layout
-├── app.js             # JavaScript logic and functionality
-├── README.md          # Project documentation
+├── index.html         
+├── styles.css         
+├── app.js             
+├── README.md          
+├── setup.sh
+|-- setup.py
+|-- .gitignore           
 │
-├── backend/           # Backend code (to be implemented)
-│   ├── server.js      # Server setup
-│   ├── routes/        # API routes
-│   ├── models/        # Database models
-│   └── utils/         # Utility functions
-│
-├── data/              # Data files
-│   ├── raw/           # Raw dataset
-│   └── processed/     # Cleaned data
-│
-└── docs/              # Documentation
-    └── report.pdf     # Technical documentation
+├── backend/           
+│   ├── app.py        
+│   ├── requirements.txt 
+│   ├── models/       
+│   ├── routes/        
+│   ├── data_processing/ 
+│   └── taxi_data.db   
+├── database/         
+│   └── schema.sql     
+|---data/raw
+     
 ```
 
 ## Installation & Setup
 
 ### Prerequisites
 - Modern web browser (Chrome, Firefox, Safari, Edge)
-- Node.js (for backend - v14 or higher)
-- PostgreSQL/SQLite/MySQL (for database)
+- Python 3.7 or higher
 - Git (for version control)
 
-### Frontend Setup
+### Quick Setup
 
 1. **Clone the repository**
 ```bash
@@ -77,28 +80,61 @@ git clone <repository-url>
 cd Team-6_Taxi_App
 ```
 
-2. **Open the application**
-   - Simply open `index.html` in your web browser, or
-   - Use a local server for better performance:
-
+2. **Run the setup script**
 ```bash
-# Using Python 3
-python -m http.server 8000
-
-# Using Node.js (if you have http-server installed)
-npx http-server -p 8000
+python setup.py
 ```
 
-3. **Access the dashboard**
-   - Open your browser and navigate to `http://localhost:8000`
+3. **Start the Flask server**
+```bash
+# Activate virtual environment
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-### Backend Setup (Coming Soon)
+# Start the server
+cd backend && python app.py
+```
 
-The backend implementation will include:
-1. Data processing and cleaning scripts
-2. Database schema and migration files
-3. RESTful API endpoints
-4. Connection configuration
+4. **Access the dashboard**
+   - Open your browser and navigate to `http://localhost:5000`
+
+### Manual Setup
+
+#### Frontend Only
+```bash
+# Simply open the HTML file
+open index.html
+# or use a local server
+python -m http.server 8000
+```
+
+#### Full Stack (Frontend + Backend)
+```bash
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Start the server
+cd backend && python app.py
+
+# Access at http://localhost:5000
+```
+
+### Backend Features
+
+The backend provides:
+1. **RESTful API** with filtering and pagination
+2. **SQLite database** with real NYC taxi data processing
+3. **Data cleaning pipeline** for raw dataset processing
+4. **Statistics endpoints** for analytics
+5. **CORS support** for frontend integration
+6. **Health check** endpoint
+
+### Real Dataset Processing
+
+the train.csv is placed in data/raw
 
 ## Usage
 
@@ -168,21 +204,32 @@ A linear search implementation for filtering trips based on search terms.
 **Time Complexity**: O(n)
 **Space Complexity**: O(n)
 
-## API Integration (Placeholder)
+## API Integration
 
-The frontend is designed to integrate with a backend API. Currently, it uses sample data. To connect to a real backend:
+The frontend automatically integrates with the backend API:
 
-1. Update the API endpoint in `app.js`:
-```javascript
-const API_BASE_URL = 'http://localhost:5000/api';
-```
+### Available Endpoints
+- `GET /api/trips` - Fetch all trips with filtering and pagination
+- `GET /api/trips/stats` - Get aggregated statistics
+- `GET /api/trips/hourly` - Get hourly trip distribution
+- `GET /api/trips/payment-types` - Get payment type breakdown
+- `GET /api/health` - Health check
 
-2. Implement the following endpoints:
-   - `GET /api/trips` - Fetch all trips
-   - `POST /api/trips/filter` - Get filtered trips
-   - `GET /api/trips/stats` - Get aggregated statistics
+### Query Parameters
+- `page`, `limit` - Pagination
+- `sort`, `order` - Sorting
+- `startDate`, `endDate` - Date filtering
+- `passengerCount` - Passenger count filter
+- `minFare`, `maxFare` - Fare range filtering
+- `minDistance`, `maxDistance` - Distance range filtering
+- `search` - Text search
 
-3. Update the `fetchTripsFromAPI()` function to use real endpoints
+### Automatic Fallback
+The frontend automatically detects API availability:
+- ✅ **API Available**: Uses real data from backend
+
+
+This ensures the dashboard works in both development and production environments.
 
 ## Data Schema
 
@@ -219,27 +266,17 @@ const API_BASE_URL = 'http://localhost:5000/api';
 - Lazy loading can be implemented for large datasets
 - Debouncing on search input for better UX
 
-## Future Enhancements
 
-- [ ] Backend API implementation
-- [ ] Database integration
-- [ ] Data processing pipeline
-- [ ] User authentication
-- [ ] Export functionality (CSV, PDF)
-- [ ] Advanced analytics and ML predictions
-- [ ] Real-time data updates
-- [ ] Map visualization with pickup/dropoff locations
-- [ ] Comparison mode for different time periods
 
 ## Contributing
 
-This is a team project. All team members should:
+This is a team project. 
 
-1. Create feature branches for new work
-2. Write clear commit messages
-3. Test thoroughly before merging
-4. Update documentation as needed
-5. Follow the existing code style
+1. Created feature branches for new work
+2. Wrote clear commit messages
+3. Tested thoroughly before merging
+4. Updated documentation as needed
+5. Followed the existing code style
 
 ## Team Members
 
@@ -248,7 +285,7 @@ This is a team project. All team members should:
 
 ## License
 
-This project is created for educational purposes as part of a university assignment.
+This project is created for easy way of helping the community.
 
 ## Contact
 
@@ -262,5 +299,5 @@ For questions or issues, please contact the team or create an issue in the repos
 
 ---
 
-*Note*: This is a frontend-only implementation. Backend and database components are to be developed as part of the full assignment requirements.
+
 
