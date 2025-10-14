@@ -116,10 +116,28 @@ npm start
 
 The backend provides:
 1. **RESTful API** with filtering and pagination
-2. **SQLite database** with sample data
-3. **Statistics endpoints** for analytics
-4. **CORS support** for frontend integration
-5. **Health check** endpoint
+2. **SQLite database** with real NYC taxi data processing
+3. **Data cleaning pipeline** for raw dataset processing
+4. **Statistics endpoints** for analytics
+5. **CORS support** for frontend integration
+6. **Health check** endpoint
+
+### Real Dataset Processing
+
+For assignment compliance with the official NYC Taxi Trip Dataset:
+
+1. **Place `train.zip`** in `data/raw/` directory
+2. **Run data processing**:
+   ```bash
+   cd backend
+   npm run process-data
+   ```
+3. **Start the server**:
+   ```bash
+   npm start
+   ```
+
+See [REAL_DATA_SETUP.md](REAL_DATA_SETUP.md) for detailed instructions.
 
 ## Usage
 
