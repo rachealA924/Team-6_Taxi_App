@@ -117,6 +117,13 @@ async function loadSampleData() {
         }
         
         const data = await response.json();
+        
+        // If API returns empty data, fall back to sample data
+        if (data.trips.length === 0) {
+            console.log('API returned empty data, using sample data');
+            throw new Error('No data from API');
+        }
+        
         dashboardState.allTrips = data.trips;
         dashboardState.filteredTrips = [...data.trips];
         
@@ -206,6 +213,13 @@ async function applyFilters() {
         }
         
         const data = await response.json();
+        
+        // If API returns empty data, fall back to local filtering
+        if (data.trips.length === 0) {
+            console.log('API returned empty data, using local filtering');
+            throw new Error('No data from API');
+        }
+        
         dashboardState.filteredTrips = data.trips;
         dashboardState.currentPage = 1;
         

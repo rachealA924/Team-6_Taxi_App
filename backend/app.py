@@ -10,25 +10,18 @@ CORS(app)
 
 # Database configuration
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "taxi_data.db")}'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, "taxi_data.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+# Import models first
+from models import db, Trip, Zone
 
-# Import models after db is initialized
-from models import trip, zone
-
-# Set db instance in models to avoid circular import
-trip.db = db
-zone.db = db
+# Initialize the database
+db.init_app(app)
 
 # Import routes
 from routes.analytics import analytics_bp
 from routes.trips import trips_bp
-
-# Import models for routes
-from models.trip import Trip
-from models.zone import Zone
 
 # Register blueprints
 app.register_blueprint(analytics_bp, url_prefix='/api')

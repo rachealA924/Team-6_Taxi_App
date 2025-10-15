@@ -65,62 +65,188 @@ Team-6_Taxi_App/
      
 ```
 
-## Installation & Setup
+## 🚀 Installation & Setup
 
 ### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- Python 3.7 or higher
-- Git (for version control)
+- **Python 3.7+** (Check with `python --version`)
+- **Modern Web Browser** (Chrome, Firefox, Safari, Edge)
+- **Git** (for version control)
+- **Terminal/Command Prompt**
 
-### Quick Setup
+### Option 1: Quick Setup (Recommended)
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/rachealA924/Team-6_Taxi_App.git
 cd Team-6_Taxi_App
 ```
 
-2. **Run the setup script**
+2. **Run the automated setup script**
 ```bash
-python setup.py
+# Make setup script executable (Linux/Mac)
+chmod +x setup.sh
+
+# Run setup script
+./setup.sh
 ```
 
-3. **Start the Flask server**
+3. **Start the application**
 ```bash
-# Activate virtual environment
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Start the server
-cd backend && python app.py
+# The setup script will guide you through starting the server
+# Or manually start with:
+cd backend
+python3 app.py
 ```
 
 4. **Access the dashboard**
    - Open your browser and navigate to `http://localhost:5000`
+   - The dashboard will load with sample data
 
-### Manual Setup
+### Option 2: Manual Setup
 
-#### Frontend Only
-```bash
-# Simply open the HTML file
-open index.html
-# or use a local server
-python -m http.server 8000
-```
-
-#### Full Stack (Frontend + Backend)
+#### Step 1: Environment Setup
 ```bash
 # Create virtual environment
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+```
+
+#### Step 2: Install Dependencies
+```bash
+# Install Python dependencies
 pip install -r backend/requirements.txt
 
-# Start the server
-cd backend && python app.py
-
-# Access at http://localhost:5000
+# Install Node.js dependencies (if needed)
+npm install
 ```
+
+#### Step 3: Database Setup
+```bash
+# Navigate to backend directory
+cd backend
+
+# The database will be created automatically when you start the server
+# Or manually create tables:
+python -c "from app import app, db; app.app_context().push(); db.create_all()"
+```
+
+#### Step 4: Start the Application
+
+**Backend Server:**
+```bash
+cd backend
+python3 app.py
+```
+
+**Frontend (Alternative):**
+```bash
+# If you want to run frontend separately
+python -m http.server 8000
+# Then open http://localhost:8000
+```
+
+### Option 3: Frontend Only (No Backend)
+
+If you just want to see the dashboard without the backend:
+
+```bash
+# Simply open the HTML file in your browser
+open index.html
+
+# Or use a local server
+python -m http.server 8000
+# Then open http://localhost:8000
+```
+
+### 🔧 Environment Configuration
+
+Create a `.env` file in the backend directory (optional):
+```env
+FLASK_ENV=development
+FLASK_DEBUG=True
+DATABASE_URL=sqlite:///taxi_data.db
+```
+
+### 📊 Data Setup
+
+The application works with sample data by default. To use real NYC taxi data:
+
+1. **Download the dataset** (train.csv) and place it in `data/raw/`
+2. **Run data processing**:
+```bash
+cd backend
+python -c "from data_processing.data_cleaner import process_data; process_data()"
+```
+
+### 🐛 Troubleshooting
+
+**Common Issues:**
+
+1. **Port 5000 already in use:**
+```bash
+# Kill process using port 5000
+lsof -ti:5000 | xargs kill -9
+# Or change port in app.py
+```
+
+2. **Python dependencies not found:**
+```bash
+# Ensure virtual environment is activated
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
+
+# Reinstall dependencies
+pip install -r backend/requirements.txt
+```
+
+3. **Database errors:**
+```bash
+# Delete existing database and recreate
+rm backend/taxi_data.db
+cd backend && python app.py
+```
+
+4. **CORS errors:**
+   - Ensure backend is running on port 5000
+   - Check that Flask-CORS is installed
+   - Verify API_BASE_URL in app.js
+
+### ✅ Verification
+
+After setup, verify everything works:
+
+1. **Backend Health Check:**
+```bash
+curl http://localhost:5000/api/health
+```
+
+2. **Frontend Access:**
+   - Open `http://localhost:5000`
+   - You should see the dashboard with charts and data
+
+3. **API Endpoints:**
+   - `http://localhost:5000/api/trips` - Should return trip data
+   - `http://localhost:5000/api/trips/stats` - Should return statistics
+
+### 🚀 Production Deployment
+
+For production deployment:
+
+1. **Use a production WSGI server:**
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 app:app
+```
+
+2. **Set up a reverse proxy** (nginx)
+3. **Use PostgreSQL** instead of SQLite
+4. **Enable HTTPS**
+5. **Set up monitoring and logging**
 
 ### Backend Features
 

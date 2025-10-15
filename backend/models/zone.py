@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float
 
-# Initialize db as None to avoid circular import
-db = None
+# Import db from the package
+from . import db
 
 class Zone(db.Model):
     __tablename__ = 'zones'

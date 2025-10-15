@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app import Trip, Zone, db
+from models import Trip, Zone, db
 from sqlalchemy import func, extract
 from datetime import datetime, timedelta
 
