@@ -10,6 +10,7 @@ const dashboardState = {
 
 // API Configuration
 const API_BASE_URL = 'http://localhost:5000/api';
+const USE_API = true; // set to true when your backend is running
 
 // Sample data structure - fallback if API is not available
 const sampleTrips = [
@@ -100,6 +101,14 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Load data from API or fallback to sample data
 async function loadSampleData() {
     try {
+        if (!USE_API) {
+            dashboardState.allTrips = sampleTrips;
+            dashboardState.filteredTrips = [...sampleTrips];
+            console.log('Sample data loaded:', dashboardState.allTrips.length, 'trips');
+            await updateStats();
+            await renderDashboard();
+            return;
+        }
         console.log('Fetching data from API...');
         const response = await fetch(`${API_BASE_URL}/trips`);
         
@@ -188,6 +197,7 @@ async function applyFilters() {
         params.append('sort', dashboardState.currentSort);
         params.append('order', dashboardState.sortDirection);
 
+        if (!USE_API) throw new Error('API disabled');
         console.log('Fetching filtered data from API...');
         const response = await fetch(`${API_BASE_URL}/trips?${params}`);
         
@@ -265,6 +275,7 @@ async function resetFilters() {
 // Update statistics from API or calculate locally
 async function updateStats() {
     try {
+        if (!USE_API) throw new Error('API disabled');
         // Try to get stats from API first
         const response = await fetch(`${API_BASE_URL}/trips/stats`);
         
@@ -328,6 +339,7 @@ function updateStatsDisplay(stats) {
 // Load hourly data from API
 async function loadHourlyData() {
     try {
+        if (!USE_API) throw new Error('API disabled');
         const response = await fetch(`${API_BASE_URL}/trips/hourly`);
         
         if (response.ok) {
@@ -363,6 +375,7 @@ async function loadHourlyData() {
 // Load payment type data from API
 async function loadPaymentTypeData() {
     try {
+        if (!USE_API) throw new Error('API disabled');
         const response = await fetch(`${API_BASE_URL}/trips/payment-types`);
         
         if (response.ok) {
@@ -824,12 +837,12 @@ function updatePagination() {
     }
 }
 
-// API Integration Functions (to be implemented when backend is ready)
+//API Integration Functions (to be implemented when backend is ready)
 async function fetchTripsFromAPI() {
     try {
-        // const response = await fetch('http://localhost:5000/api/trips');
-        // const data = await response.json();
-        // return data;
+         const response = await fetch('http://localhost:5000/api/trips');
+         const data = await response.json();
+         return data;
         
         // For now, return sample data
         return sampleTrips;
@@ -841,13 +854,13 @@ async function fetchTripsFromAPI() {
 
 async function fetchFilteredTrips(filters) {
     try {
-        // const response = await fetch('http://localhost:5000/api/trips/filter', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(filters)
-        // });
-        // const data = await response.json();
-        // return data;
+         const response = await fetch('http://localhost:5000/api/trips/filter', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(filters)
+         });
+         const data = await response.json();
+         return data;
         
         // For now, return sample data
         return sampleTrips;

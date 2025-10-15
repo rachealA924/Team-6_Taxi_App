@@ -1,3 +1,11 @@
+html {
+    height: 100%;
+    background-image: NYC.png'
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 * {
     margin: 0;
     padding: 0;
@@ -11,7 +19,7 @@
     --success-color: rgb(39, 174, 96);
     --warning-color: rgb(243, 18, 18);
     --bg-color: rgb(245, 247, 250);
-    --card-bg: rgb(255, 255, 255);
+    --card-bg: rgba(255, 255, 255, 0.88);
     --text-primary: rgb(44, 62, 80);
     --text-secondary: rgb(127, 140, 141);
     --border-color: rgb(224, 224, 224);
@@ -21,9 +29,27 @@
 
 body {
     font-family: 'Quicksand', sans-serif;
-    background-color: var(--bg-color);
+    height: 100%;
+    background-color: transparent;
     color: var(--text-primary);
     line-height: 1.6;
+}
+
+/* Guaranteed background layer */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('http://127.0.0.1:5500/NYC.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.45; /* adjust visibility */
+    z-index: -1;
 }
 
 /* Navigation Bar */
