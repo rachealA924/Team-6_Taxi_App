@@ -1,6 +1,6 @@
 html {
     height: 100%;
-    background-image: NYC.png'
+    background-image: url('/NYC.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -13,18 +13,33 @@ html {
 }
 
 :root {
-    --primary-color: rgb(44, 62, 80);
+    --primary-color: rgb(1, 24, 48);
     --secondary-color: rgb(52, 152, 219);
     --accent-color: rgb(211, 231, 60);
     --success-color: rgb(39, 174, 96);
     --warning-color: rgb(243, 18, 18);
-    --bg-color: rgb(245, 247, 250);
+
     --card-bg: rgba(255, 255, 255, 0.88);
-    --text-primary: rgb(44, 62, 80);
+    --text-primary: rgb(1, 24, 46);
     --text-secondary: rgb(127, 140, 141);
     --border-color: rgb(224, 224, 224);
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+header {
+    background-color: var(--card-bg);
+    color: white;
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+    border-bottom: 0.1px solid var(--border-color);
+    border-top: 0.1px solid var(--border-color);
+    position: static;
 }
 
 body {
@@ -43,7 +58,7 @@ body::before {
     right: 0;
     bottom: 0;
     left: 0;
-    background-image: url('http://127.0.0.1:5500/NYC.png');
+    background-image: url('./NYC.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -484,11 +499,12 @@ body::before {
 
     .chart-container {
         grid-template-columns: 1fr;
+        align-items: center;
     }
 
     .table-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
     }
 
     .table-controls {
