@@ -1,1 +1,32 @@
+{
+	"name": "team-6-taxi-app",
+	"version": "0.1.0",
+	"description": "NYC Taxi Trip Analytics Dashboard (frontend assets + helper npm scripts)",
+	"main": "app.js",
+		"scripts": {
+			"start": "python -m http.server 8000",
+			"start:backend": "python backend/app.py",
+			"install:backend": "pip install -r backend/requirements.txt",
+			"lint": "echo \"No lint configured. Add ESLint or other tools if needed.\"",
+			"test": "echo \"No JS tests configured.\""
+		},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rachealA924/Team-6_Taxi_App.git"
+	},
+	"keywords": [
+		"nyc",
+		"taxi",
+		"analytics",
+		"dashboard"
+	],
+	"author": "Racheal Resty Akello",
+	"license": "MIT",
+	"engines": {
+		"node": ">=12"
+	}
+		,"devDependencies": {
+			"http-server": "^0.13.0"
+		}
+}
 
