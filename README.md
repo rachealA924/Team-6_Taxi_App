@@ -427,4 +427,7 @@ LINK OF THE VIDEO:
 [
 ](https://drive.google.com/file/d/1kLgFucZ169wNaqwXySwenGUE3QgycIPA/view?usp=sharing)
 
+LINK TO OUR DEPLOYMENT:
+[
+](https://team-6-taxi-app-git-main-racheals-projects-cf6a576e.vercel.app?_vercel_share=hiV8FyCWj5pyKPx1ZjR5tTZPSbUTkI6Z)
 
